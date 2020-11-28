@@ -1,10 +1,59 @@
-<h1>{{ question.question_text }}</h1>
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-<form action="{% url 'animes:vote' question.id %}" method="post">
+{% extends 'animes/base.html' %} {% block content %}
+
+{% comment %}
+<h1> {{ animework.anime_name }} </h1>
 {% csrf_token %}
-{% for choice in question.choice_set.all %}
-  <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
-  <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+<ul>
+{% for review in animework.review_set.all %}
+  <li>{{ review.review_content }}</li>
 {% endfor %}
-<input type="submit" value="Vote">
-</form>
+</ul>
+{% endcomment %}
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-8 card mb-4  mt-3 left  top">
+      <div class="card-body">
+        <h1>{% block title %} {{ animework.title }} {% endblock title %}</h1>
+        <p class="card-text ">{{ animework.anime_description | safe }}</p>
+      </div>
+    </div>
+    {% block sidebar %} {% include 'animes/sidebar.html' %} {% endblock sidebar %}
+
+    <div class="col-md-8 card mb-4  mt-3 ">
+      <div class="card-body">
+        <!-- comments -->
+        <h2>Reviews</h2>
+
+        {% for review in animework.review_set.all %}
+        <div class="comments" style="padding: 10px;">
+          <p class="font-weight-bold">
+            <span class=" text-muted font-weight-normal">
+              {{ review.review_date_created }}
+            </span>
+          </p>
+          {{ review.review_content | linebreaks }}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="col-md-8 card mb-4  mt-3 ">
+      <div class="card-body">
+        {% if new_review %}
+        <div class="alert alert-success" role="alert">
+          Your comment is awaiting moderation
+        </div>
+        {% else %}
+        <h3>Leave a Review</h3>
+        <form method="post" style="margin-top: 1.3em;">
+          {{ review_form.as_p }}
+          {% csrf_token %}
+          <button type="submit" class="btn btn-primary  btn-lg">Submit</button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

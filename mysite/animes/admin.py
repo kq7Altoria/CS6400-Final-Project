@@ -1,8 +1,7 @@
-from django.contrib import admin
-
 # Register your models here.
 from django.contrib import admin
-from .models import Question, Choice, AnimeWork
+from django.contrib.auth.admin import UserAdmin
+from .models import Question, Choice, AnimeWork, Review, User
 
 class ChoiceInline(admin.StackedInline):
     model = Choice
@@ -24,5 +23,16 @@ class AnimeWorkAdmin(admin.ModelAdmin):
         ('Anime Detail Info', {'fields' : ['anime_avatar_url', 'anime_cover_image_url', 'anime_rating', ]}),
     ]
 
+# class AnimeUserInline(admin.StackedInline):
+#     model = AnimeUser
+#     can_delete = False
+#     verbose_name_plural = 'AnimeUser'
+#
+# class AnimeUserAdmin(BaseUserAdmin):
+#     inlines = (AnimeUserInline,)
+
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(AnimeWork, AnimeWorkAdmin)
+admin.site.register(Review)
+
+admin.site.register(User, UserAdmin)

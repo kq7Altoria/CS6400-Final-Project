@@ -7,14 +7,15 @@ from django.views import generic
 from django.utils import timezone
 
 from .models import Choice, Question, AnimeWork, User, Tag, ProductionCompany, Review
+from .forms import ReviewForm
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 
-@login_required
-def index(request):
-    return render(request, 'animes/index.html')
+# @login_required
+# def index(request):
+#     return render(request, 'animes/index.html')
 
 def sign_up(request):
     context = {}
@@ -27,32 +28,27 @@ def sign_up(request):
     context['form'] = form
     return render(request, 'animes/sign_up.html', context)
 
-
 class IndexView(generic.ListView):
     template_name = 'animes/index.html'
-    context_object_name = 'latest_question_list'
+    model = AnimeWork
+    # context_object_name = 'latest_question_list'
 
     def get_queryset(self):
-        """ Return the last five published questions. """
-        return Question.objects.filter(
-            pub_date__lte=timezone.now()
-        ).order_by('-pub_date')[:5]
+        # print(AnimeWork.objects.all()[:30])
+        return AnimeWork.objects.all()[:30]
 
 class DetailView(generic.DetailView):
     model = AnimeWork
-    template_name = 'animes/anime_detail.html'
+    template_name = 'animes/detail.html'
     # def get_queryset(self):
     #     """
     #     Exludes any quesitons that aren't publised yet.
     #     """
     #     return Question.objects.filter(pub_date__lte=timezone.now())
 
-class ResultsView(generic.DetailView):
-    model = Question
-    template_name = 'animes/results.html'
 
 # Create your views here.
-# def index(request):a
+# def index(request):
 #     latest_question_list = Question.objects.order_by('-pub_date')[:5]
 #     template = loader.get_template('animes/index.html')
 #     context = {
@@ -73,12 +69,29 @@ class ResultsView(generic.DetailView):
 
 class AnimeWorkView(generic.DetailView):
     model = AnimeWork
-    template_name = 'animes/anime_detail.html'
+    template_name = 'animes/detail.html'
 
 class UserView(generic.DetailView):
     model = User
     template_name = 'animes/user.html'
 
+def review_detail(request, anime_id):
+    template_name = 'animes/detail.html'
+    anime_work = get_object_or_404(AnimeWork, pk = anime_id)
+    reviews = anime_work.review_set.all()
+    new_review = None
+
+    if request.method == 'POST':
+        review_form = ReviewForm(data = request.POST)
+        if review_form.is_valid():
+            new_review = review_form.save(commit = False)
+            new_review.review_anime_id = anime_work
+            new_review.save()
+    else:
+        review_form = ReviewForm()
+    return render(request, template_name, {
+    'animework' : anime_work, 'reviews' : reviews, 'new_review' : new_review, 'review_form' : review_form
+    })
 
 def vote(request, question_id):
     question = get_object_or_404(Question, pk = question_id)

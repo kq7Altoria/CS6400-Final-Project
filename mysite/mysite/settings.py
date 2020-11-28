@@ -121,3 +121,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 LOGIN_REDIRECTED_URL = 'home'
+
+AUTH_USER_MODEL = "animes.User"
