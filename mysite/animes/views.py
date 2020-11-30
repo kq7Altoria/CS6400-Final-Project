@@ -5,6 +5,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
+from django.core.paginator import Paginator
+
 
 from .models import AnimeWork, User, Tag, ProductionCompany, Review
 from .forms import ReviewForm
@@ -28,6 +30,36 @@ def sign_up(request):
     context['form'] = form
     return render(request, 'animes/sign_up.html', context)
 
+def rank_by_date(request):
+    context = {}
+    all_animes = AnimeWork.objects.all().order_by('anime_airing_start_date')[:60]
+    paginator = Paginator(all_animes, 15)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context['object_list'] = page_obj
+    context['page_obj'] = page_obj
+    return render(request, 'animes/index.html', context)
+
+def rank_by_rating(request):
+    context = {}
+    all_animes = AnimeWork.objects.all().order_by('-anime_rating')[:60]
+    paginator = Paginator(all_animes, 15)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context['object_list'] = page_obj
+    context['page_obj'] = page_obj
+    return render(request, 'animes/index.html', context)
+
+def rank_by_name(request):
+    context = {}
+    all_animes = AnimeWork.objects.all().order_by('anime_name')[:60]
+    paginator = Paginator(all_animes, 15)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context['object_list'] = page_obj
+    context['page_obj'] = page_obj
+    return render(request, 'animes/index.html', context)
+
 def recommendation(request, user_id):
     pass
 
@@ -40,6 +72,7 @@ def profile(request, user_id):
 class IndexView(generic.ListView):
     template_name = 'animes/index.html'
     model = AnimeWork
+    paginate_by = 16
     # context_object_name = 'latest_question_list'
 
     def get_queryset(self):

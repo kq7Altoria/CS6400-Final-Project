@@ -5,17 +5,39 @@
 <div class="modal-body row">
   <div class="col-md-9">
     <!-- Your first column here -->
-  <ul class="list-group list-group-flush">
-    <!-- <li class="list-group-item">Cras justo odio</li>
-    <li class="list-group-item">Dapibus ac facilisis in</li>
-    <li class="list-group-item">Morbi leo risus</li>
-    <li class="list-group-item">Porta ac consectetur ac</li>
-    <li class="list-group-item">Vestibulum at eros</li> -->
-    {% for animework in object_list %}
-      <li class="list-group-item"> {{ animework.anime_name }}</li>
-    {% endfor %}
-  </ul>
+    <div class="row justify-content-end">
+      <a href="/animes/rank_by_rating" class="col-1 px-1 mx-1 my-1">Rank By Rating</a>
+      <a href="/animes/rank_by_name" class="col-1 px-1 mx-1 my-1">Rank By Name</a>
+      <a href="/animes/rank_by_date" class="col-1 px-1 mx-1 my-1">Rank By Date</a>
+    </div>
+    <ul class="list-group list-group-flush">
+      <!-- <li class="list-group-item">Cras justo odio</li>
+      <li class="list-group-item">Dapibus ac facilisis in</li>
+      <li class="list-group-item">Morbi leo risus</li>
+      <li class="list-group-item">Porta ac consectetur ac</li>
+      <li class="list-group-item">Vestibulum at eros</li> -->
+      {% for animework in object_list %}
+        <a href="/animes/{{ animework.anime_id }}" class="list-group-item list-group-item-action list-group-item-action"> {{ animework.anime_name }}</a>
+      {% endfor %}
+    </ul>
 
+    <div class="pagination my-2">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
   </div>
   <div class="col-md-3">
     <!-- Your second column here -->
