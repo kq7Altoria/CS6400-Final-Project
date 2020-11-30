@@ -1,13 +1,25 @@
+{% extends 'animes/my_base.html' %}
 
-{% load static %}
-<link rel="stylesheet" type="text/css" href="{% static 'animes/style.css' %}">
-
-<!-- <h1> Welcome {{ user }} </h1> -->
 {% block content %}
-  <h2>AnimeWorks</h2>
-  <ul>
+
+<div class="modal-body row">
+  <div class="col-md-9">
+    <!-- Your first column here -->
+  <ul class="list-group list-group-flush">
+    <!-- <li class="list-group-item">Cras justo odio</li>
+    <li class="list-group-item">Dapibus ac facilisis in</li>
+    <li class="list-group-item">Morbi leo risus</li>
+    <li class="list-group-item">Porta ac consectetur ac</li>
+    <li class="list-group-item">Vestibulum at eros</li> -->
     {% for animework in object_list %}
-      <li> {{ animework.anime_name }} </li>
+      <li class="list-group-item"> {{ animework.anime_name }}</li>
     {% endfor %}
   </ul>
-{% endblock %}
+
+  </div>
+  <div class="col-md-3">
+    <!-- Your second column here -->
+    <label>Part 2</label>
+  </div>
+</div>
+{% endblock content %}

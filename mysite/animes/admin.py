@@ -1,21 +1,8 @@
 # Register your models here.
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import Question, Choice, AnimeWork, Review, User
+from .models import AnimeWork, Review, User
 
-class ChoiceInline(admin.StackedInline):
-    model = Choice
-    extra = 3
-
-class QuestionAdmin(admin.ModelAdmin):
-    fieldsets = [
-        (None, {'fields' : ['question_text']}),
-        ('Date information', {'fields' : ['pub_date']}),
-    ]
-    inlines = [ChoiceInline]
-    list_display = ('question_text', 'pub_date', 'was_published_recently')
-    list_filter = ['pub_date', 'question_text']
-    search_fields = ['question_text']
 
 class AnimeWorkAdmin(admin.ModelAdmin):
     fieldsets = [
@@ -31,7 +18,6 @@ class AnimeWorkAdmin(admin.ModelAdmin):
 # class AnimeUserAdmin(BaseUserAdmin):
 #     inlines = (AnimeUserInline,)
 
-admin.site.register(Question, QuestionAdmin)
 admin.site.register(AnimeWork, AnimeWorkAdmin)
 admin.site.register(Review)
 
