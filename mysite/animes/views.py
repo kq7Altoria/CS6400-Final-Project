@@ -30,6 +30,18 @@ def sign_up(request):
     context['form'] = form
     return render(request, 'animes/sign_up.html', context)
 
+def search(request):
+    context = {}
+    keyword = request.GET['keyword']
+    selected_animes = AnimeWork.objects.filter(anime_name__icontains=keyword)
+    paginator = Paginator(selected_animes, 15)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context['object_list'] = page_obj
+    context['page_obj'] = page_obj
+    return render(request, 'animes/index.html', context)
+
+
 def rank_by_date(request):
     context = {}
     all_animes = AnimeWork.objects.all().order_by('anime_airing_start_date')[:60]

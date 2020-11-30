@@ -15,5 +15,6 @@ urlpatterns = [
     path('sign_up/', views.sign_up, name = "sign_up"),
     path('rank_by_date/', views.rank_by_date, name = "rank_by_date"),
     path('rank_by_name/', views.rank_by_name, name = "rank_by_name"),
-    path('rank_by_rating/', views.rank_by_rating, name = "rank_by_rating")
+    path('rank_by_rating/', views.rank_by_rating, name = "rank_by_rating"),
+    path('search/', views.search, name="search"),
 ]
