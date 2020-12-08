@@ -1,0 +1,158 @@
+{% extends 'animes/my_base.html' %}
+
+{% block content %}
+
+<script src="https://d3js.org/d3.v4.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+
+<!-- <button onclick="update(cleaned_wish_data)">Data 1</button>
+<button onclick="update(cleaned_watch_data)">Data 2</button> -->
+
+<div class="container">
+  <div class="row justify-content-md-center">
+    <div class="col-6">
+      <ul class="list-group-flush">
+      <li class="list-group-item align-items-center mx-2 my-2"><h5>{{ user.username }}'s Anime Category Statistics</h5></li>
+      <button class="list-group-item btn-outline-primary mx-2 xy-2" onclick="update(cleaned_wish_data, wish_tag_color, svg)">Wish List Anime Category Statistics</button>
+      <button class="list-group-item btn-outline-success mx-2 xy-2" onclick="update(cleaned_watch_data, watch_tag_color, svg)">Watch List Anime Category Statistics</button>
+      </ul>
+      <div id="my_dataviz"></div>
+    </div>
+    <div class="col-6">
+      <ul class="list-group-flush">
+      <li class="list-group-item align-items-center mx-2 my-2"><h5>{{ user.username }}'s Anime Production Statistics</h5></li>
+      <button class="list-group-item btn btn-outline-primary mx-2 xy-2" onclick="update(cleaned_wish_company, wish_company_color, svg2)">Wish List Anime Production Company Statistics</button>
+      <button class="list-group-item btn btn-outline-success mx-2 xy-2" onclick="update(cleaned_watch_company, watch_company_color, svg2)">Watch List Anime Production Company Statistics</button>
+      </ul>
+      <div id="my_dataviz2"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+// set the dimensions and margins of the graph
+var width = 600
+    height = 600
+    margin = 90
+
+// The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
+var radius = Math.min(width, height) / 2 - margin
+
+// append the svg object to the div called 'my_dataviz'
+var svg = d3.select("#my_dataviz")
+  .append("svg")
+    .attr("width", width)
+    .attr("height", height)
+  .append("g")
+    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+var svg2 = d3.select("#my_dataviz2")
+    .append("svg")
+      .attr("width", width)
+      .attr("height", height)
+    .append("g")
+      .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+// create tag datasets
+var data_wish_tag = {{ json_wish_tag | safe}};
+var data_watch_tag = {{ json_watch_tag | safe }};
+var cleaned_wish_data = {};
+var cleaned_watch_data = {};
+var wish_list_tags = new Set();
+var watch_list_tags = new Set();
+for (var i = 0; i < data_wish_tag.length; i ++) {
+  wish_list_tags.add(data_wish_tag[i]['tag_name'])
+  cleaned_wish_data[data_wish_tag[i]['tag_name']] = data_wish_tag[i]['count']
+}
+for (var i = 0; i < data_watch_tag.length; i ++) {
+  wish_list_tags.add(data_wish_tag[i]['tag_name'])
+  cleaned_watch_data[data_watch_tag[i]['tag_name']] = data_watch_tag[i]['count']
+}
+// console.log(wish_list_tags);
+
+// create production company datasets
+var data_wish_company = {{ json_wish_company | safe}};
+var data_watch_company = {{ json_watch_company | safe }};
+var cleaned_wish_company = {};
+var cleaned_watch_company = {};
+var wish_list_company = new Set();
+var watch_list_company = new Set();
+for (var i = 0; i < data_wish_company.length; i ++) {
+  wish_list_company.add(data_wish_company[i]['company_name'])
+  cleaned_wish_company[data_wish_company[i]['company_name']] = data_wish_company[i]['count']
+}
+for (var i = 0; i < data_watch_company.length; i ++) {
+  watch_list_company.add(data_watch_company[i]['company_name'])
+  cleaned_watch_company[data_watch_company[i]['company_name']] = data_watch_company[i]['count']
+}
+
+// set the color scale
+var wish_tag_color = d3.scaleOrdinal()
+  .domain(wish_list_tags)
+  .range(d3.schemeDark2);
+
+var watch_tag_color = d3.scaleOrdinal()
+  .domain(watch_list_tags)
+  .range(d3.schemeDark2);
+
+var wish_company_color = d3.scaleOrdinal()
+  .domain(wish_list_company)
+  .range(d3.schemeDark2);
+
+var watch_company_color = d3.scaleOrdinal()
+  .domain(watch_list_company)
+  .range(d3.schemeDark2);
+
+function prepareData (data){
+	var labels = Object.keys(data);
+	return labels.map(function(label){
+		return { label: label, value: data[label] }
+	});
+}
+
+// A function that create / update the plot for a given variable:
+function update(data, color, svg_to_select) {
+
+  // Compute the position of each group on the pie:
+  var pie = d3.pie()
+    .value(function(d) {return d.value; })
+    .sort(function(a, b) { console.log(a) ; return d3.ascending(a.key, b.key);} ) // This make sure that group order remains the same in the pie chart
+  var data_ready = pie(d3.entries(data));
+
+  // map to data
+  var u = svg_to_select.selectAll("path")
+    .data(data_ready)
+
+  // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
+  u
+    .enter()
+    .append('path')
+    .merge(u)
+    .transition()
+    .duration(1000)
+    .attr('d', d3.arc()
+      .innerRadius(0)
+      .outerRadius(radius)
+    )
+    .attr('fill', function(d){ return(color(d.data.key)) })
+    .attr("stroke", "white")
+    .style("stroke-width", "2px")
+    .style("opacity", 1)
+
+
+  // remove the group that is not present anymore
+  u
+    .exit()
+    .remove()
+
+}
+
+
+// Initialize the plot with the first dataset
+update(cleaned_wish_data, wish_tag_color, svg)
+update(cleaned_wish_company, wish_company_color, svg2)
+
+</script>
+
+{% endblock %}

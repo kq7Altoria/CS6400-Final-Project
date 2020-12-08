@@ -1,7 +1,7 @@
 # Register your models here.
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import AnimeWork, Review, User
+from .models import *
 
 
 class AnimeWorkAdmin(admin.ModelAdmin):
@@ -20,5 +20,8 @@ class AnimeWorkAdmin(admin.ModelAdmin):
 
 admin.site.register(AnimeWork, AnimeWorkAdmin)
 admin.site.register(Review)
-
+admin.site.register(WatchList)
+admin.site.register(WishList)
+admin.site.register(Tag)
+admin.site.register(ProductionCompany)
 admin.site.register(User, UserAdmin)

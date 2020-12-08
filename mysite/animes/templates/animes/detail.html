@@ -1,4 +1,6 @@
-{% extends 'animes/my_base.html' %} {% block content %}
+{% extends 'animes/my_base.html' %}
+
+{% block content %}
 
 {% comment %}
 <h1> {{ animework.anime_name }} </h1>
@@ -10,17 +12,40 @@
 </ul>
 {% endcomment %}
 
+<style>
+      body {
+      font-family: "Roboto", sans-serif;
+      font-size: 17px;
+      background-color: #fdfdfd;
+  }
+  .shadow {
+      box-shadow: 0 4px 2px -2px rgba(0, 0, 0, 0.1);
+  }
+  .btn-danger {
+      color: #fff;
+      background-color: #f00000;
+      border-color: #dc281e;
+  }
+  .masthead {
+      background: #3398E1;
+      height: auto;
+      padding-bottom: 15px;
+      box-shadow: 0 16px 48px #E3E7EB;
+      padding-top: 10px;
+  }
+</style>
+
+
 
 <div class="container">
   <div class="row">
-    <div class="col-md-8 card mb-4  mt-3 left  top">
+    <div class="col-md-8 card mb-4  mt-3 left top">
       <div class="card-body">
-        <h1>{% block title %} {{ animework.title }} {% endblock title %}</h1>
+        <h1>{% block title %} {{ animework.anime_name }} {% endblock title %}</h1>
         <p class="card-text ">{{ animework.anime_description | safe }}</p>
       </div>
     </div>
     {% block sidebar %} {% include 'animes/sidebar.html' %} {% endblock sidebar %}
-
     <div class="col-md-8 card mb-4  mt-3 ">
       <div class="card-body">
         <!-- comments -->
@@ -47,8 +72,8 @@
         {% else %}
         <h3>Leave a Review</h3>
         <form method="post" style="margin-top: 1.3em;">
-          {{ review_form.as_p }}
           {% csrf_token %}
+          {{ review_form.as_p }}
           <button type="submit" class="btn btn-primary  btn-lg">Submit</button>
         </form>
         {% endif %}

@@ -17,7 +17,25 @@
       <li class="list-group-item">Porta ac consectetur ac</li>
       <li class="list-group-item">Vestibulum at eros</li> -->
       {% for animework in object_list %}
-        <a href="/animes/{{ animework.anime_id }}" class="list-group-item list-group-item-action list-group-item-action"> {{ animework.anime_name }}</a>
+        <a href="/animes/{{ animework.anime_id }}" class="list-group-item list-group-item-action list-group-item-action"> {{ animework.anime_name }} <br>
+          <span>{{ animework.anime_airing_start_date }} / {{ animework.anime_rating}} /
+             {% for company in animework.productioncompany_set.all|slice:":3" %}
+              {% if forloop.last %}
+                {{ company.company_name }}
+              {% else %}
+                {{ company.company_name}};
+              {% endif %}
+             {% endfor %} /
+
+             {% for tag in animework.tag_set.all|slice:":5" %}
+              {% if forloop.last %}
+                {{ tag.tag_name }}
+              {% else %}
+                {{ tag.tag_name}};
+              {% endif %}
+             {% endfor %}
+          </span>
+        </a>
       {% endfor %}
     </ul>
 
@@ -39,9 +57,13 @@
         </span>
     </div>
   </div>
-  <div class="col-md-3">
-    <!-- Your second column here -->
-    <label>Part 2</label>
+  <div class="col-md-3 my-5">
+    <h3>Tags</h3>
+    <form method="get" action="/animes/search_by_tag/">
+      {% for tag in tags %}
+        <button type="submit" value="{{ tag.tag_name }}" name="tag_info" class="btn btn-primary btn-lg mx-1 my-1" role="button" aria-pressed="true">{{ tag.tag_name }}</button>
+      {% endfor %}
+    </form>
   </div>
 </div>
 {% endblock content %}

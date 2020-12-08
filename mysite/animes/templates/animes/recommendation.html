@@ -1,1 +1,52 @@
 {% extends 'animes/my_base.html' %}
+
+{% load static %}
+
+{% block link %}
+<link rel="stylesheet" type="text/css" href="{% static 'animes/css/style.css' %}">
+{% endblock link %}
+
+<!-- <head>
+<style>
+  body {
+    background: white url("images/recommendation_background.jpg") no-repeat;
+  }
+</style>
+</head> -->
+
+{% block content %}
+
+<!-- Button trigger modal -->
+<div class="d-flex justify-content-center align-self-center">
+  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+    Get Your Recommendations
+  </button>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Your Recommendations</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <ul class="list-group-flush">
+          {% for rec in recommendation %}
+            <li class="list-group-item mx-2 my-2">
+              <a href="/animes/{{ rec.anime_id }}">{{ rec.anime_name }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
